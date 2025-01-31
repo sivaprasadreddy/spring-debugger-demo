@@ -8,19 +8,14 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 public class BookmarkService {
     private final BookmarkRepository bookmarkRepository;
+    private final CategoryService categoryService;
 
-    public BookmarkService(BookmarkRepository bookmarkRepository) {
+    public BookmarkService(BookmarkRepository bookmarkRepository, CategoryService categoryService) {
         this.bookmarkRepository = bookmarkRepository;
-    }
-
-
-    public void deleteById(Long id) {
-        var bookmark = bookmarkRepository.findById(id)
-                        .orElseThrow(()-> new BookmarkNotFoundException("Bookmark not found"));
-        bookmarkRepository.delete(bookmark);
+        this.categoryService = categoryService;
     }
 
     public List<BookmarkInfo> findAllBookmarks() {
@@ -31,22 +26,47 @@ public class BookmarkService {
         return bookmarkRepository.findBookmarkById(id);
     }
 
-    public Bookmark create(Bookmark bookmark) {
-        bookmark.setId(null);
-        return bookmarkRepository.save(bookmark);
-    }
-
     public Optional<Bookmark> findById(Long id) {
         return bookmarkRepository.findById(id);
     }
 
-    public void update(Bookmark bookmark) {
+    @Transactional
+    public Bookmark create(CreateBookmarkCmd cmd) {
+        var bookmark = new Bookmark(cmd.title(), cmd.url());
+        if(cmd.categoryName() != null) {
+            Category category = categoryService.findByName(cmd.categoryName()).orElse(null);
+            if (category == null) {
+                category = categoryService.create(new Category(cmd.categoryName()));
+            }
+            bookmark.setCategory(category);
+        }
+        return bookmarkRepository.save(bookmark);
+    }
+
+    @Transactional
+    public void update(UpdateBookmarkCmd cmd) {
         var bookmarkEntity =
-                bookmarkRepository.findById(bookmark.getId())
-                        .orElseThrow(()-> new BookmarkNotFoundException("Bookmark not found"));
-        bookmarkEntity.setTitle(bookmark.getTitle());
-        bookmarkEntity.setUrl(bookmark.getUrl());
+                bookmarkRepository.findById(cmd.id())
+                        .orElseThrow(()-> BookmarkNotFoundException.withId(cmd.id()));
+        bookmarkEntity.setTitle(cmd.title());
+        bookmarkEntity.setUrl(cmd.url());
+        if(cmd.categoryName() != null) {
+            Category category = categoryService.findByName(cmd.categoryName()).orElse(null);
+            if (category == null) {
+                category = categoryService.create(new Category(cmd.categoryName()));
+            }
+            bookmarkEntity.setCategory(category);
+        } else {
+            bookmarkEntity.setCategory(null);
+        }
         bookmarkEntity.setUpdatedAt(Instant.now());
         bookmarkRepository.save(bookmarkEntity);
+    }
+
+    @Transactional
+    public void deleteById(Long id) {
+        var bookmark = bookmarkRepository.findById(id)
+                .orElseThrow(()-> BookmarkNotFoundException.withId(id));
+        bookmarkRepository.delete(bookmark);
     }
 }

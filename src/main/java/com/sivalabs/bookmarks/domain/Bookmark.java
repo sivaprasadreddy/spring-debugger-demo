@@ -26,6 +26,10 @@ public class Bookmark {
     @Column(name = "url", nullable = false, length = 500)
     private String url;
 
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
+
     @NotNull
     @ColumnDefault("now()")
     @Column(name = "created_at", nullable = false)
@@ -38,15 +42,15 @@ public class Bookmark {
     }
 
     public Bookmark(String title, String url) {
-        this.title = title;
-        this.url = url;
-        this.createdAt = Instant.now();
+        this(null, title, url, null);
     }
 
-    public Bookmark(Long id, String title, String url) {
+    public Bookmark(Long id, String title, String url, Category category) {
         this.id = id;
         this.title = title;
         this.url = url;
+        this.category = category;
+        this.createdAt = Instant.now();
     }
 
     public Long getId() {
@@ -71,6 +75,14 @@ public class Bookmark {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
     }
 
     public Instant getCreatedAt() {

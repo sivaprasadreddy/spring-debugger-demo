@@ -56,7 +56,7 @@ class BookmarkControllerTest {
 
     @Test
     void shouldCreateBookmark() {
-        var newBookmark = new BookmarkController.CreateBookmarkPayload("JetBrains Academy", "https://www.jetbrains.com/academy/");
+        var newBookmark = new BookmarkController.CreateBookmarkPayload("JetBrains Academy", "https://www.jetbrains.com/academy/", "Tutorials");
 
         ResponseEntity<Void> responseEntity = restTemplate.postForEntity("/api/bookmarks", newBookmark, Void.class);
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.CREATED);
@@ -67,7 +67,7 @@ class BookmarkControllerTest {
         Bookmark initialBookmark = new Bookmark("JetBrains Blog","https://blog.jetbrains.com");
         Long id = bookmarkRepository.saveAndFlush(initialBookmark).getId();
 
-        var updatedBookmark = new BookmarkController.UpdateBookmarkPayload("Updated Title", "https://updated.url");
+        var updatedBookmark = new BookmarkController.UpdateBookmarkPayload("Updated Title", "https://updated.url", "Blogs");
         restTemplate.put("/api/bookmarks/{id}", updatedBookmark, id);
 
         Bookmark foundBookmark = bookmarkRepository.findById(id).orElse(null);
