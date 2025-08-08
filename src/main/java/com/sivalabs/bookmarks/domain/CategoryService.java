@@ -16,7 +16,7 @@ public class CategoryService {
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public Category create(Category category) {
+    public Category createCategory(Category category) {
         category.setId(null);
         return categoryRepository.save(category);
     }

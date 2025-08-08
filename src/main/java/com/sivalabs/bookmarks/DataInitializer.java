@@ -30,7 +30,7 @@ public class DataInitializer implements CommandLineRunner {
         log.info("Starting data import");
         bookmarkRepository.deleteAllInBatch();
         List<Bookmark> bookmarks = getBookmarks();
-        bookmarks.forEach(b -> bookmarkService.create(new CreateBookmarkCmd(b.getTitle(), b.getUrl(), b.getCategory().getName())));
+        bookmarks.forEach(b -> bookmarkService.createBookmark(new CreateBookmarkCmd(b.getTitle(), b.getUrl(), b.getCategory().getName())));
         log.info("Completed data import");
     }
 

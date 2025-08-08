@@ -39,12 +39,12 @@ public class BookmarkService {
     }
 
     @Transactional
-    public Bookmark create(CreateBookmarkCmd cmd) {
+    public Bookmark createBookmark(CreateBookmarkCmd cmd) {
         var bookmark = new Bookmark(cmd.title(), cmd.url());
         if(cmd.categoryName() != null) {
             Category category = categoryService.findByName(cmd.categoryName()).orElse(null);
             if (category == null) {
-                category = categoryService.create(new Category(cmd.categoryName()));
+                category = categoryService.createCategory(new Category(cmd.categoryName()));
             }
             bookmark.setCategory(category);
         }
@@ -53,11 +53,11 @@ public class BookmarkService {
         return bookmark;
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public Category create(Category category) {
+    /*@Transactional(propagation = Propagation.REQUIRES_NEW)
+    public Category createCategory(Category category) {
         category.setId(null);
         return categoryRepository.save(category);
-    }
+    }*/
 
     @Transactional
     public void update(UpdateBookmarkCmd cmd) {
@@ -69,7 +69,7 @@ public class BookmarkService {
         if(cmd.categoryName() != null) {
             Category category = categoryService.findByName(cmd.categoryName()).orElse(null);
             if (category == null) {
-                category = categoryService.create(new Category(cmd.categoryName()));
+                category = categoryService.createCategory(new Category(cmd.categoryName()));
             }
             bookmarkEntity.setCategory(category);
         } else {

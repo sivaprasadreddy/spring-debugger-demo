@@ -1,7 +1,6 @@
 package com.sivalabs.bookmarks.domain;
 
 import com.sivalabs.bookmarks.TestcontainersConfig;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -32,7 +31,7 @@ class BookmarkServiceTest {
                 "My New Article",
                 null,
                 categoryName);
-        assertThatThrownBy(()-> bookmarkService.create(cmd))
+        assertThatThrownBy(()-> bookmarkService.createBookmark(cmd))
                 .isInstanceOf(TransactionSystemException.class);
 
         categoryOptional = categoryRepository.findByNameEqualsIgnoreCase(categoryName);

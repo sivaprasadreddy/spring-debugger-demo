@@ -33,7 +33,7 @@ class BookmarkController {
     @PostMapping
     ResponseEntity<Void> createBookmark(@Valid @RequestBody CreateBookmarkPayload payload) {
         var cmd = new CreateBookmarkCmd(payload.title(), payload.url(), payload.categoryName());
-        var savedBookmark = bookmarkService.create(cmd);
+        var savedBookmark = bookmarkService.createBookmark(cmd);
         var url = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
                 .build(savedBookmark.getId());
