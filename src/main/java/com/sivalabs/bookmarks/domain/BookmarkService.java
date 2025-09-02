@@ -3,7 +3,6 @@ package com.sivalabs.bookmarks.domain;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
@@ -15,12 +14,10 @@ public class BookmarkService {
     private static final Logger log = LoggerFactory.getLogger(BookmarkService.class);
     private final BookmarkRepository bookmarkRepository;
     private final CategoryService categoryService;
-    private final CategoryRepository categoryRepository;
 
-    public BookmarkService(BookmarkRepository bookmarkRepository, CategoryService categoryService, CategoryRepository categoryRepository) {
+    public BookmarkService(BookmarkRepository bookmarkRepository, CategoryService categoryService) {
         this.bookmarkRepository = bookmarkRepository;
         this.categoryService = categoryService;
-        this.categoryRepository = categoryRepository;
     }
 
     @Transactional(readOnly = true)
@@ -52,12 +49,6 @@ public class BookmarkService {
         log.info("Created bookmark with id: {}", bookmark.getId());
         return bookmark;
     }
-
-    /*@Transactional(propagation = Propagation.REQUIRES_NEW)
-    public Category createCategory(Category category) {
-        category.setId(null);
-        return categoryRepository.save(category);
-    }*/
 
     @Transactional
     public void update(UpdateBookmarkCmd cmd) {

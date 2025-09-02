@@ -11,3 +11,5 @@ CREATE TABLE categories
 );
 
 ALTER TABLE bookmarks ADD COLUMN category_id BIGINT DEFAULT NULL;
+
+INSERT INTO categories (name) VALUES ('Java');
